@@ -48,10 +48,31 @@ le* Using copy-list initialization, `auto x = {1, 2}` makes x into `initializer_
 * Association (simple line, with multiplicities) implements a bidirectional reference relationship between classes
 * Dependency (dashed line, open arrow), when a class creates another class, so when a class appears in the methods of another class
 
-# Design C++ Classes
+## Design C++ Classes
 
 * Has-a is preferred over is-a when the relationship is in doubt (think of the `map` and `multimap` example, where the multimap is a kind of map but could be implement better containing a map so that when inserting a new value, this is put in a collection that is then put into the map). Has-a is better because adding a base class behaviour impacts all derived classes that would need to override it. Inheritance adds more coupling than aggregation/composition. It is a code smell when inherting and some methods don't make much sense unless heavily overridden
 * Liskov substitution principle (LSP) is the ability to substitute base classes with derived without altering the behaviour of the code
 * Overriding should not be the default, unless a class is pure-virtual. It is a code smell when there is too much overriding
 * Multiple inheritance is messy if there are functions from two base classes with the same name, or if two base classes themselves inherit from another common base (is this duplicated?), the diamond inheritance problem
 * Mixin classes are classes used with inheritance to extend behaviour (the base classes implement some specific behaviour instead of a more general classification?). They are mixed in with normal classes to add to their behaviour
+
+## Design for reuse
+
+* Design by contract (regarding designing with safeguards) is based on the partition of responsibility, the main concept are preconditions (user responsible), postconditions and invariants (coder responsible). Example `std::vector` access operator grants access to elements provided the user has put enough element inside
+* An alternative is to handle all safety cases (coder has all responsibility)
+* Open/closed principle, design classes/components that are easy to extend (adding behaviour or properties) but hard to modify (should not have to change the implementations)
+* Easy interfaces come from using C++ idioms, so constructors/destructors instead of initialize/finalize methods. Assignment to a new object instead of a reset method
+* Dependency injection principle example where instead of having a global logger entity usable everywhere, it should be passed in as an argument of the constructor/inherited from to let a component use loggings
+* ISP (interface segregation principle) is realized when a component uses another only through an interface that is limited in scope (components should not have huge interfaces, interfaces should be split/segregated and given to other components as needed)
+* DIP (dependency inversion principle) is realized when high-level modules are independent of low level modules. For example when a high-level error logger interface is used by components, and a low-level specific implementation is injected when needed into those components (this dependency can be injected using the constructor). So that those components depend only on the high-level interface
+
+## Memory Management
+
+* Calling delete/free on a `nullptr` is valid (it does nothing)
+* `malloc` does not call the constructor `new`/`new[]` do. `free` does not call the destructor (`delete` does, `delete[]` does on each element)
+* In most cases it is fine to not recover from an out-of-memory exception thrown by `new`. Use `new(nothrow)` to just return a `nullptr` in case of failure
+* When using `new int`/`new int[N]` with POD, the return memory is uninitialized. With classes the default constructor is called. To be sure use the `{}` initialization
+* `delete`/`delete[]` will not call destructors recursively on pointers obviously
+* If `int arr[2][3]` then `decltype(arr[0])` is a reference type instead of `int[3]` as one could expect
+* When using the array version of `new[]`, only the first dimension can be dynamic, as the others are used for a well-defined type `new[n][3][4]`. `new[n][m][4]` will not compile. Dynamically allocated multidimensional array are obtainable with arrays of pointers (but in this case flat arrays are just better)
+* When declaring functions arrays decay to pointers `void func(int arr[2])`, the 2 is ignored. `void func(int (&arr)[2])` by taking a reference works only on arrays of size 2
