@@ -76,3 +76,16 @@ le* Using copy-list initialization, `auto x = {1, 2}` makes x into `initializer_
 * If `int arr[2][3]` then `decltype(arr[0])` is a reference type instead of `int[3]` as one could expect
 * When using the array version of `new[]`, only the first dimension can be dynamic, as the others are used for a well-defined type `new[n][3][4]`. `new[n][m][4]` will not compile. Dynamically allocated multidimensional array are obtainable with arrays of pointers (but in this case flat arrays are just better)
 * When declaring functions arrays decay to pointers `void func(int arr[2])`, the 2 is ignored. `void func(int (&arr)[2])` by taking a reference works only on arrays of size 2
+
+## Classes
+
+* Constructors cannot be used in the body of another constructor, but there is constructor delegation in the constructor initialized list
+* A missing default constructor disallows c-style arrays
+* Beware of C++ most vexing parse (using `Foo foo()` thinking if calls the default constructor, it declares a function), always use `{}`, unless there is a `std::initializer_list` constructor, use `(arg)` in that case
+* Default constructed objects like `Foo()` for temporaries or `Foo foo{}` are value-initialized, so POD are zero-initialized, while objects are default-initialized. This also applies to `enum class Foo { FOO = 1}`, `Foo foo{}` will initialized the object to zero, another example is `std::errc{}` when using `std::from_chars_result`
+* Everything in an object happens also to its components recursively
+* Object initialization should be done first, in-class, if arguments are required in the constructor initializer list, else in the body of the constructor (at this point it is an assignment, all the components must be already initialized implicitly or explicitly). 
+* The order of initialization is the in-class order, not the one in the list. Because of this unless it's inefficient always use constructor arguments for multiple members (if it applies) instead of recycling member (also for body initialization/assignment)
+* Using `default` for constructors (even the copy-constructor) when the components do not have a proper constructor will not work
+* Beware because constructor can throw pretty easily
+* Delegating constructor of the same class must be alone in the list (else double construction nonsense), of base classes can be with other member (often they need to be called as they are not called automatically). Recursion is UB
