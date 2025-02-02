@@ -14,3 +14,7 @@ target_sources(09-1 PRIVATE FILE_SET CXX_MODULES FILES ${PROJECT_SOURCE_DIR}/09-
 add_executable(09-2)
 target_sources(09-2 PRIVATE 09-2/main.cpp)
 target_sources(09-2 PRIVATE FILE_SET CXX_MODULES FILES ${PROJECT_SOURCE_DIR}/09-2/Person.ixx ${PROJECT_BINARY_DIR}/std/std.ixx)
+
+add_executable(09-3)
+target_sources(09-3 PRIVATE 09-3/main.cpp)
+target_sources(09-3 PRIVATE FILE_SET CXX_MODULES FILES ${PROJECT_SOURCE_DIR}/09-3/Person.ixx ${PROJECT_BINARY_DIR}/std/std.ixx)

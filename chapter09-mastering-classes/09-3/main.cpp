@@ -13,10 +13,4 @@ auto main() -> int {
   assert(p2 <= p1);
   assert(p1 > p2);
   assert(p1 >= p2);
-
-  auto ordering{p1 <=> p2};
-
-  std::println("Who is the best math person? {} {}",
-               std::is_lt(ordering) ? p2.getFirstName() : p1.getFirstName(),
-               std::is_gt(ordering) ? p1.getLastName() : p2.getLastName());
 }
