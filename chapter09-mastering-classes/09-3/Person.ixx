@@ -9,10 +9,11 @@ export class Person {
   // Order of initialization matters here, as in this version there is the
   // initials invariant that needs to be mantained
   explicit Person(std::string firstName, std::string lastName)
-      : m_firstName{std::move(firstName)}, m_lastName{std::move(lastName)} {
-    // As a more safe option move dependent initializations here
-    m_initials = extractInitials(m_firstName, m_lastName);
-  };
+      : m_firstName{std::move(firstName)},
+        m_lastName{std::move(lastName)},
+        m_initials{extractInitials(m_firstName, m_lastName)} {
+          // As a more safe option put dependent initializations here
+        };
 
   // Skipping initials as they are maintained as an invariant
   bool operator==(const Person& other) const noexcept {
