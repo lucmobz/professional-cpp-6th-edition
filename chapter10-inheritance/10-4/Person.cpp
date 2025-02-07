@@ -31,6 +31,10 @@ auto Person::getInitials() const noexcept -> const std::string& {
   return m_initials;
 }
 
+auto Person::toString() const -> std::string {
+  return std::format("{} {}, {}", getFirstName(), getLastName(), getInitials());
+}
+
 auto Person::extractFirstLetter(const std::string& name) noexcept -> char {
   return name.empty() ? '\0' : name[0];
 }
@@ -43,5 +47,23 @@ auto Person::extractInitials(const std::string& firstName,
 
 Employee::Employee(std::string firstName, std::string lastName, unsigned id)
     : Person{firstName, lastName}, m_id{id} {}
+
+auto Employee::getId() const noexcept { return m_id; }
+
+auto Employee::toString() const -> std::string {
+  return std::format("{}, ID {}", Person::toString(), getId());
+}
+
+auto Manager::toString() const -> std::string {
+  return std::format("{}, Manager", Employee::toString());
+}
+
+auto Director::toString() const -> std::string {
+  return std::format("{}, Director", Employee::toString());
+}
+
+auto DirectorManager::toString() const -> std::string {
+  return std::format("{}, Director & Manager", Employee::toString());
+}
 
 }  // namespace HR
