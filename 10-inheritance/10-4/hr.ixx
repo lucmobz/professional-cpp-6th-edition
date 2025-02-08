@@ -1,4 +1,4 @@
-export module person;
+export module hr;
 
 import std;
 

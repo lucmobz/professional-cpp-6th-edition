@@ -1,4 +1,4 @@
-module person;
+module hr;
 
 import std;
 
